@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/config.xml
+ *
+ * Acquia Commerce Manager Integration Configuration Values
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
+    <topic name="connector.product.push" request="string">
+        <handler name="connector.product.push.handler" type="Acquia\CommerceManager\Model\ProductPush" method="pushProductBatch" />
+    </topic>
+    <topic name="connector.stock.push" request="string">
+        <handler name="connector.stock.push.handler" type="Acquia\CommerceManager\Model\StockPush" method="pushStock" />
+    </topic>
+</config>

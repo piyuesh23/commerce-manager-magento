@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/events.xml
+ *
+ * Acquia Commerce Manager Integration Event Observer config
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_product_save_after">
+        <observer name="acquia_connector_product" instance="Acquia\CommerceManager\Observer\ProductSaveObserver"/>
+    </event>
+    <event name="catalog_category_save_after">
+        <observer name="acquia_connector_category" instance="Acquia\CommerceManager\Observer\CategorySaveObserver"/>
+    </event>
+    <event name="category_move">
+        <observer name="acquia_connector_category_move" instance="Acquia\CommerceManager\Observer\CategoryMoveObserver"/>
+    </event>
+</config>

@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/webapi.xml
+ *
+ * API endpoint configuration for the Acquia Commerce Manager integration.
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/customers/:customerId/abandon" method="DELETE">
+        <service class="Acquia\CommerceManager\Api\CartManagementInterface" method="abandon"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/carts/:cartId/getCart" method="GET">
+        <service class="Acquia\CommerceManager\Api\CartManagementInterface" method="getCart"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/carts/:cartId/updateCart" method="POST">
+        <service class="Acquia\CommerceManager\Api\CartManagementInterface" method="updateCart"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/carts/:cartId/associate-cart" method="POST">
+        <service class="Acquia\CommerceManager\Api\CartManagementInterface" method="associateCart"/>
+        <resources>
+            <resource ref="Magento_Cart::manage" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/:cartId/get-shipping-address" method="GET">
+        <service class="Acquia\CommerceManager\Api\ShippingAddressManagementInterface" method="get"/>
+        <resources>
+            <resource ref="Magento_Cart::manage" />
+        </resources>
+    </route>
+
+    <route url="/V1/products/sync" method="POST">
+        <service class="Acquia\CommerceManager\Api\ProductSyncManagementInterface" method="syncProducts"/>
+        <resources>
+            <resource ref="Magento_Catalog::products"/>
+        </resources>
+    </route>
+
+    <route url="/V1/carts/:cartId/braintree-client-token" method="GET">
+        <service class="Acquia\CommerceManager\Api\ClientTokenManagementInterface" method="getCustomerClientToken"/>
+        <resources>
+            <resource ref="Magento_Cart::manage" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/braintree-client-token" method="GET">
+        <service class="Acquia\CommerceManager\Api\ClientTokenManagementInterface" method="getClientToken"/>
+        <resources>
+            <resource ref="Magento_Cart::manage" />
+        </resources>
+    </route>
+
+    <route url="/V1/customers/by-login-and-password" method="POST">
+        <service class="Acquia\CommerceManager\Api\CustomerAuthManagementInterface" method="getCustomerByLoginAndPassword"/>
+        <resources>
+            <resource ref="Magento_Customer::manage" />
+        </resources>
+    </route>
+
+    <route url="/V1/customers/:customerId/set-password" method="POST">
+        <service class="Acquia\CommerceManager\Api\CustomerAuthManagementInterface" method="setCustomerPassword"/>
+        <resources>
+            <resource ref="Magento_Customer::manage" />
+        </resources>
+    </route>
+
+    <route url="/V1/customers/:customerId/subscription" method="GET">
+        <service class="Acquia\CommerceManager\Api\NewsletterManagementInterface" method="getSubscriptionById"/>
+        <resources>
+            <resource ref="Magento_Customer::manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/newsletter/subscription/:email" method="GET">
+        <service class="Acquia\CommerceManager\Api\NewsletterManagementInterface" method="getSubscriptionByEmail"/>
+        <resources>
+            <resource ref="Magento_Customer::manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/newsletter/subscribe" method="POST">
+        <service class="Acquia\CommerceManager\Api\NewsletterManagementInterface" method="setSubscriptionByEmail"/>
+        <resources>
+            <resource ref="Magento_Customer::manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/catalogRules" method="GET">
+        <service class="Acquia\CommerceManager\Api\CatalogRuleRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="Magento_CatalogRule::promo"/>
+        </resources>
+    </route>
+
+    <route url="/V1/catalogRules/count" method="GET">
+        <service class="Acquia\CommerceManager\Api\CatalogRuleRepositoryInterface" method="getCount"/>
+        <resources>
+            <resource ref="Magento_CatalogRule::promo"/>
+        </resources>
+    </route>
+
+    <route url="/V1/categories/extended" method="GET">
+        <service class="Acquia\CommerceManager\Api\CategoryManagementInterface" method="getExtendedTree"/>
+        <resources>
+            <resource ref="Magento_Catalog::products"/>
+        </resources>
+    </route>
+
+    <route url="/V1/salesRules/discounts" method="GET">
+        <service class="Acquia\CommerceManager\Api\SalesRuleRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="Magento_SalesRule::quote"/>
+        </resources>
+    </route>
+
+    <route url="/V1/products/links_rule/enabled" method="GET">
+        <service class="Acquia\CommerceManager\Api\TargetRuleRepositoryInterface" method="getTargetRulesEnabled"/>
+        <resources>
+            <resource ref="Magento_Catalog::products"/>
+        </resources>
+    </route>
+
+    <route url="/V1/products/:sku/links_rule/:type" method="GET">
+        <service class="Acquia\CommerceManager\Api\TargetRuleRepositoryInterface" method="getProductsByType"/>
+        <resources>
+            <resource ref="Magento_Catalog::products"/>
+        </resources>
+    </route>
+
+</routes>
+

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/adminhtml/di.xml
+ *
+ * Acquia Commerce Manager Integration DI Container config
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Model\ResourceModel\Product">
+        <plugin name="acm_index_rules_after_product_save" type="Acquia\CommerceManager\Model\Plugin\SalesRuleIndexer\Product"/>
+    </type>
+    <type name="Magento\Catalog\Model\Category">
+        <plugin name="acm_index_rules_after_product_assign" type="Acquia\CommerceManager\Model\Plugin\SalesRuleIndexer\Category"/>
+    </type>
+    <type name="Magento\Store\Model\Website">
+        <plugin name="acm_index_rules_after_website_update" type="Acquia\CommerceManager\Model\Plugin\SalesRuleIndexer\Website"/>
+    </type>
+    <type name="Magento\SalesRule\Model\Rule">
+        <plugin name="acm_index_rules_after_rule_save" type="Acquia\CommerceManager\Model\Plugin\SalesRuleIndexer\SalesRule"/>
+    </type>
+</config>

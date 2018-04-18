@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/integration/api.xml
+ *
+ * Acquia Commerce Manager Integration Require Resources ACL
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+
+<integrations>
+    <integration name="AcquiaConnector">
+        <resources>
+            <resource name="Magento_Backend::admin" />
+            <resource name="Magento_Sales::sales" />
+            <resource name="Magento_Sales::sales_operation" />
+            <resource name="Magento_Sales::sales_order" />
+            <resource name="Magento_Sales::actions" />
+            <resource name="Magento_Sales::create" />
+            <resource name="Magento_Reward::reward_spend" />
+            <resource name="Magento_Sales::actions_view" />
+            <resource name="Magento_Sales::email" />
+            <resource name="Magento_Sales::reorder" />
+            <resource name="Magento_Sales::review_payment" />
+            <resource name="Magento_Sales::capture" />
+            <resource name="Magento_Sales::invoice" />
+            <resource name="Magento_Sales::sales_invoice" />
+            <resource name="Magento_Sales::shipment" />
+            <resource name="Magento_Sales::sales_creditmemo" />
+            <resource name="Magento_Rma::magento_rma" />
+            <resource name="Magento_Paypal::use" />
+            <resource name="Magento_Sales::transactions" />
+            <resource name="Magento_Sales::transactions_fetch" />
+            <resource name="Magento_AdvancedCheckout::magento_advancedcheckout" />
+            <resource name="Magento_AdvancedCheckout::view" />
+            <resource name="Magento_AdvancedCheckout::update" />
+            <resource name="Magento_Catalog::catalog" />
+            <resource name="Magento_CatalogPermissions::catalog_magento_catalogpermissions" />
+            <resource name="Magento_Catalog::catalog_inventory" />
+            <resource name="Magento_Catalog::products" />
+            <resource name="Magento_Catalog::attributes_attributes" />
+            <resource name="Magento_PricePermissions::read_product_price" />
+            <resource name="Magento_Catalog::categories" />
+            <resource name="Magento_Customer::customer" />
+            <resource name="Magento_Customer::manage" />
+            <resource name="Magento_Customer::online" />
+            <resource name="Magento_Cart::cart" />
+            <resource name="Magento_Cart::manage" />
+            <resource name="Magento_Backend::marketing" />
+            <resource name="Magento_CatalogRule::promo" />
+            <resource name="Magento_CatalogRule::promo_catalog" />
+            <resource name="Magento_CatalogInventory::cataloginventory" />
+            <resource name="Magento_TargetRule::targetrule" />
+            <resource name="Magento_SalesRule::quote" />
+            <resource name="Magento_GiftCardAccount::customer_giftcardaccount" />
+            <resource name="Magento_Backend::marketing_seo" />
+            <resource name="Magento_Search::search" />
+            <resource name="Magento_Search::synonyms" />
+            <resource name="Magento_UrlRewrite::urlrewrite" />
+            <resource name="Magento_Sitemap::sitemap" />
+            <resource name="Magento_Backend::marketing_user_content" />
+            <resource name="Magento_Review::reviews_all" />
+            <resource name="Magento_Backend::content" />
+            <resource name="Magento_Backend::content_elements" />
+            <resource name="Magento_Cms::page" />
+            <resource name="Magento_Cms::block" />
+            <resource name="Magento_Banner::magento_banner" />
+            <resource name="Magento_Widget::widget_instance" />
+            <resource name="Magento_Cms::media_gallery" />
+            <resource name="Magento_Theme::theme" />
+            <resource name="Magento_CurrencySymbol::system_currency" />
+            <resource name="Magento_CurrencySymbol::currency_rates" />
+            <resource name="Magento_CurrencySymbol::symbols" />
+        </resources>
+    </integration>
+</integrations>

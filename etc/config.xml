@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/config.xml
+ *
+ * Acquia Commerce Manager Integration Configuration Values
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <webapi>
+            <acquia_commerce>
+                <connector_enable>false</connector_enable>
+                <connector_url>https://api.us-east-1.prod.acm.acquia.io/</connector_url>
+                <connector_api_version_path>v2</connector_api_version_path>
+                <acm_id></acm_id>
+                <connector_ssl_val>true</connector_ssl_val>
+            </acquia_commerce>
+            <acquia_commerce_settings>
+                <product_push_batch_size>5</product_push_batch_size>
+            </acquia_commerce_settings>
+            <acquia_commerce_security>
+                <ac_hmac_id></ac_hmac_id>
+                <ac_hmac_secret></ac_hmac_secret>
+            </acquia_commerce_security>
+        </webapi>
+    </default>
+</config>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/queue.xml
+ *
+ * API endpoint configuration for the Acquia Commerce Manager integration.
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
+    <broker topic="connector.product.push" type="amqp" exchange="magento">
+        <queue name="connectorProductPushQueue" consumer="connectorProductPushConsumer" />
+    </broker>
+    <broker topic="connector.stock.push" type="amqp" exchange="magento">
+        <queue name="connectorStockPushQueue" consumer="connectorStockPushConsumer" />
+    </broker>
+</config>

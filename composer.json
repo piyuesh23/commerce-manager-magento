@@ -1,0 +1,41 @@
+{
+    "name": "acquia/commerce-manager-magento",
+    "description": "Magento 2.x extension for use with the Acquia Commerce Connector Service.",
+    "require": {
+        "acquia/http-hmac-php": "~3.2",
+        "guzzlehttp/guzzle": "~6.0",
+        "magento/framework": "~101.0",
+        "magento/module-braintree": "~100.2",
+        "magento/module-catalog": "~102.0",
+        "magento/module-catalog-import-export":"~100.2",
+        "magento/module-catalog-inventory": "~100.2",
+        "magento/module-catalog-rule": "~101.0",
+        "magento/module-checkout": "~100.2",
+        "magento/module-configurable-product": "~100.2",
+        "magento/module-customer": "~101.0",
+        "magento/module-eav": "~101.0",
+        "magento/module-integration": "~100.2",
+        "magento/module-newsletter": "~100.2",
+        "magento/module-quote": "~101.0",
+        "magento/module-rule": "~100.2",
+        "magento/module-store":"~100.2",
+        "psr/log": "^1.0"
+    },
+    "suggest": {
+    },
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors":[{
+        "name": "Acquia Engineering",
+        "homepage": "https://www.acquia.com",
+        "role": "Maintainer"
+    }],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Acquia\\CommerceManager\\": ""
+        }
+    }
+}

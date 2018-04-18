@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/adminhtml/events.xml
+ *
+ * Acquia Commerce Manager Integration Event Observer config
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="model_delete_after">
+        <observer name="acquia_connector_customer_delete_after" instance="Acquia\CommerceManager\Observer\CustomerDeleteObserver"/>
+    </event>
+    <event name="catalog_product_import_bunch_save_after">
+        <observer name="acquia_connector_product_import_save_after" instance="Acquia\CommerceManager\Observer\ProductImportBunchSaveObserver"/>
+    </event>
+</config>

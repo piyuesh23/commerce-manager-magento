@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/integration/config.xml
+ *
+ * Acquia Commerce Manager Integration Configuration
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+<integrations>
+   <integration name="AcquiaConnector">
+       <email>commerce-eng@acquia.com</email>
+       <!-- Uncomment these others only if/when you have values to write in.
+       <endpoint_url></endpoint_url>
+       <identity_link_url></identity_link_url>
+       <acm_id></acm_id>
+       <ac_hmac_id></ac_hmac_id>
+       <ac_hmac_secret></ac_hmac_secret>
+       -->
+   </integration>
+</integrations>

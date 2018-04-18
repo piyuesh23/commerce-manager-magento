@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/module.xml
+ *
+ * Module configuration for the Acquia Commerce Manager integration.
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
+    <module name="Acquia_CommerceManager" setup_version="1.1.2">
+        <sequence>
+            <module name="Magento_Integration" />
+        </sequence>
+    </module>
+</config>
+

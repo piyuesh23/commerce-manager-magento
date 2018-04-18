@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Acquia/CommerceManager/etc/indexer.xml
+ *
+ * Acquia Commerce Manager Integration Indexers config
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+
+    <indexer id="acq_product_salesrule" view_id="acq_salesrule_product" class="Acquia\CommerceManager\Model\Indexer\ProductSalesRuleIndexer" shared_index="acq_salesrule">
+        <title translate="true">Acquia Commerce Sales Rule Product</title>
+        <description translate="true">Indexed product / sales rule association</description>
+    </indexer>
+
+    <indexer id="acq_salesrule_product" view_id="acq_salesrule_rule" class="Acquia\CommerceManager\Model\Indexer\SalesRuleProductIndexer" shared_index="acq_salesrule">
+        <title translate="true">Acquia Commerce Product Sales Rule</title>
+        <description translate="true">Indexed sales rule / product association</description>
+    </indexer>
+</config>

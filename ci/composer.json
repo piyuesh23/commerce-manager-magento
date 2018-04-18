@@ -1,0 +1,16 @@
+{
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/magento/marketplace-eqp"
+    }
+  ],
+  "require": {
+    "magento/marketplace-eqp": "~1.0"
+  },
+  "scripts": {
+    "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/magento/marketplace-eqp",
+    "post-update-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/magento/marketplace-eqp",
+    "phpcs": "\"vendor/bin/phpcs\" -v --standard=MEQP2 --severity=10 --extensions=php,phtml --ignore=ci,vendor ../"
+  }
+}

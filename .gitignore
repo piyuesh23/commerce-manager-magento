@@ -1,0 +1,52 @@
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.bz2
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.tgz
+
+# Logs and databases #
+######################
+*.log
+*.sql
+!/scripts/config/*.sql
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon
+
+Thumbs.db
+._*
+
+# Vim generated files #
+######################
+*.un~
+
+# SASS #
+##########
+.sass-cache
+
+# Local development
+.phpintel
+
+# Vagrant VM data
+.vagrant
+.bundle
+
+# Composer
+vendor
+ci/vendor
+
+# Magento 2
+/magento/app/etc
+/magento/pub/*
+!/magento/pub/simplesamlphp
+/magento/var

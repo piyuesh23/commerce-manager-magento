@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * Acquia/CommerceManager/etc/di.xml
+ *
+ * Acquia Commerce Manager Integration DI Container config
+ *
+ * All rights reserved. No unauthorized distribution or reproduction.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Interface resolution -->
+    <preference for="Acquia\CommerceManager\Model\ClientFactoryInterface" type="Acquia\CommerceManager\Model\GuzzleClientFactory" />
+    <preference for="Acquia\CommerceManager\Api\CartManagementInterface" type="Acquia\CommerceManager\Model\CartManagement"/>
+    <preference for="Acquia\CommerceManager\Api\CategoryManagementInterface" type="Acquia\CommerceManager\Model\CategoryManagement"/>
+    <preference for="Acquia\CommerceManager\Api\Data\ExtendedCategoryTreeInterface" type="Magento\Catalog\Model\Category" />
+    <preference for="Acquia\CommerceManager\Api\ProductSyncManagementInterface" type="Acquia\CommerceManager\Model\ProductSyncManagement"/>
+    <preference for="Acquia\CommerceManager\Api\ClientTokenManagementInterface" type="Acquia\CommerceManager\Model\ClientTokenManagement" />
+    <preference for="Acquia\CommerceManager\Api\CustomerAuthManagementInterface" type="Acquia\CommerceManager\Model\CustomerAuthManagement" />
+    <preference for="Acquia\CommerceManager\Api\NewsletterManagementInterface" type="Acquia\CommerceManager\Model\NewsletterManagement" />
+    <preference for="Acquia\CommerceManager\Api\CatalogRuleRepositoryInterface" type="Acquia\CommerceManager\Model\CatalogRuleRepository" />
+    <preference for="Acquia\CommerceManager\Api\SalesRuleRepositoryInterface" type="Acquia\CommerceManager\Model\SalesRuleRepository" />
+    <preference for="Acquia\CommerceManager\Api\Data\ExtendedSalesRuleInterface" type="Acquia\CommerceManager\Model\Data\ExtendedSalesRule" />
+    <preference for="Acquia\CommerceManager\Api\TargetRuleRepositoryInterface" type="Acquia\CommerceManager\Model\TargetRuleRepository" />
+    <preference for="Acquia\CommerceManager\Api\ShippingAddressManagementInterface" type="Magento\Quote\Model\ShippingAddressManagement" />
+
+    <!-- Class overrides -->
+    <preference for ="\Magento\CatalogRule\Model\ResourceModel\Rule\Collection" type="\Acquia\CommerceManager\Model\ResourceModel\Rule\Collection" />
+
+    <!-- Product Relation API Builder / Processors -->
+    <preference for="Acquia\CommerceManager\Model\Product\RelationBuilderInterface" type="Acquia\CommerceManager\Model\Product\RelationBuilder" />
+    <type name="Acquia\CommerceManager\Model\Product\RelationBuilder">
+        <arguments>
+            <argument name="relations" xsi:type="array">
+                <item name="configurable" xsi:type="object">Acquia\CommerceManager\Model\Product\Relation\Configurable</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Magento CLI Command -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="enable_integration" xsi:type="object">Acquia\CommerceManager\Console\Command\EnableIntegration</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- plugins (intercepts) -->
+    <type name="Magento\InventoryMessageBus\Model\ResourceModel\StockUpdateIdx">
+        <plugin name="acm_after_stock_table_update"
+                type="Acquia\CommerceManager\Plugin\Stock"
+                sortOrder="30"/>
+    </type>
+    <type name="\Magento\Customer\Model\ResourceModel\CustomerRepository">
+        <plugin name="acquia_commercemanager_plugin_customerrepository"
+                type="Acquia\CommerceManager\Plugin\CustomerRepositoryPlugin"
+                sortOrder="10"
+                disabled="false"/>
+    </type>
+</config>
