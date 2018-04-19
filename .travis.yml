@@ -7,3 +7,4 @@ script:
   - cd ci/
   - composer install
   - composer run-script phpcs
+  - ./make-archive.sh
