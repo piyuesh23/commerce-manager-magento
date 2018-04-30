@@ -61,4 +61,10 @@
                 sortOrder="10"
                 disabled="false"/>
     </type>
+    <type name="\Magento\Sales\Model\OrderRepository">
+        <plugin name="acquia_commercemanager_plugin_orderrepository"
+                type="Acquia\CommerceManager\Plugin\OrderRepositoryPlugin"
+                sortOrder="10"
+                disabled="false"/>
+    </type>
 </config>
