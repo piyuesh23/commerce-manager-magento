@@ -44,6 +44,8 @@ Thumbs.db
 # Composer
 vendor
 ci/vendor
+ci/dist
+ci/composer.lock
 
 # Magento 2
 /magento/app/etc
