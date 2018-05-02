@@ -31,11 +31,11 @@ class OrderRepositoryPlugin
      * Here we make allowances for
      * a multiple website e-commerce set-up with customers-per-website.
      *
-     * We add the website_id to the order search
-     * so that orders are fetched from the website corresponding to the
-     * store_id of the API URL, that is, the current store.
+     * We add the store_ids of one website_id to the order search
+     * so that orders are fetched from all the stores of the website
+     * corresponding to the store_id of the API URL (the current store).
      *
-     * If the incoming searchCriteria already includes a website_id then we honour it.
+     * If the incoming searchCriteria already includes a store_id field then we honour it.
      *
      * @param \Magento\Customer\Api\CustomerRepositoryInterface $subject
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
