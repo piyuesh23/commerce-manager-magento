@@ -23,9 +23,10 @@ if [[ "${TRAVIS}" == "true" ]]; then
 else
   git_tag=$(git describe --exact-match --tags HEAD)
   dist_tag=${git_tag}
-  success_message="Successfully created tagged distribution "
+  success_message="Successfully created tagged release "
 fi
 
+mkdir -p ${dist_dir}
 git archive --worktree-attributes --prefix=${dist_name}/ -o ${dist_dir}/${dist_name}_${dist_tag}.tar.gz ${git_tag}
 
 if [ ! -f ${dist_dir}/${dist_name}_${dist_tag}.tar.gz ]; then
@@ -33,4 +34,5 @@ if [ ! -f ${dist_dir}/${dist_name}_${dist_tag}.tar.gz ]; then
     exit 1
 fi
 
-echo "${success_message}${dist_dir}/${dist_name}_${dist_tag}.tar.gz"
+echo "${success_message}"
+echo "${dist_dir}/${dist_name}_${dist_tag}.tar.gz"
