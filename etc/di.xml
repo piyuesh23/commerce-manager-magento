@@ -26,6 +26,8 @@
     <preference for="Acquia\CommerceManager\Api\Data\ExtendedSalesRuleInterface" type="Acquia\CommerceManager\Model\Data\ExtendedSalesRule" />
     <preference for="Acquia\CommerceManager\Api\TargetRuleRepositoryInterface" type="Acquia\CommerceManager\Model\TargetRuleRepository" />
     <preference for="Acquia\CommerceManager\Api\ShippingAddressManagementInterface" type="Magento\Quote\Model\ShippingAddressManagement" />
+    <preference for="Acquia\CommerceManager\Api\Data\VerifyConfigurationInterface" type="Acquia\CommerceManager\Model\Data\VerifyConfiguration" />
+    <preference for="Acquia\CommerceManager\Api\VerifyConfigurationInterface" type="Acquia\CommerceManager\Model\VerifyConfiguration" />
 
     <!-- Class overrides -->
     <preference for ="\Magento\CatalogRule\Model\ResourceModel\Rule\Collection" type="\Acquia\CommerceManager\Model\ResourceModel\Rule\Collection" />
