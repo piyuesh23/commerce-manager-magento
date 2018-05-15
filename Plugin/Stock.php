@@ -11,7 +11,7 @@
 namespace Acquia\CommerceManager\Plugin;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Acquia\CommerceManager\Helper\ProductBatch as BatchHelper;
+use Acquia\CommerceManager\Helper\Stock as StockHelper;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\InventoryMessageBus\Model\ResourceModel\StockUpdateIdx;
@@ -21,11 +21,11 @@ class Stock
 {
 
     /**
-     * Product Batch Helper
+     * Acquia Connector Stock Helper
      *
-     * @var BatchHelper
+     * @var StockHelper
      */
-    private $batchHelper;
+    private $stockHelper;
 
     /**
      * Magento Product Repository
@@ -65,17 +65,18 @@ class Stock
     /**
      * Stock constructor.
      *
-     * @param BatchHelper                $batchHelper
+     * @param StockHelper $stockHelper
      * @param ProductRepositoryInterface $productRepository
-     * @param ResourceConnection         $resource
-     * @param LoggerInterface            $logger
+     * @param ResourceConnection $resource
+     * @param LoggerInterface $logger
      */
-    public function __construct(BatchHelper $batchHelper,
+    public function __construct(
+        StockHelper $stockHelper,
         ProductRepositoryInterface $productRepository,
         ResourceConnection $resource,
         LoggerInterface $logger
     ) {
-        $this->batchHelper = $batchHelper;
+        $this->stockHelper = $stockHelper;
         $this->productRepository = $productRepository;
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -95,13 +96,13 @@ class Stock
         $websiteIds
     ) {
         // Don't do anything if we are not pushing stock changes.
-        if ($this->batchHelper->getStockMode() !== 'push') {
+        if ($this->stockHelper->getStockMode() !== 'push') {
             return [$batch, $websiteIds];
         }
 
-        $batch = $this->assignProductId($batch);
+        $cleanedBatch = $this->assignProperSkus($batch);
 
-        foreach ($batch as $row) {
+        foreach ($cleanedBatch as $row) {
             if (!empty($row['product_id'])) {
                 $row['website_ids'] = $websiteIds;
                 $this->product_ids[$row['product_id']] = $row;
@@ -124,21 +125,21 @@ class Stock
     public function afterUpdateStockTable(StockUpdateIdx $idx, $result)
     {
         if (!empty($this->product_ids)) {
-            foreach ($this->product_ids as $product_id => $data) {
+            foreach ($this->product_ids as $product_id => $row) {
                 $this->logger->info('afterUpdateStockTable: Adding product to queue.', [
                     'product_id' => $product_id,
                 ]);
 
                 $data = [
                     'id' => $product_id,
-                    'sku' => $data['sku'],
-                    'website_ids' => $data['website_ids'],
-                    'qty' => $data['qty'],
+                    'sku' => $row['exact_sku'],
+                    'website_ids' => $row['website_ids'],
+                    'qty' => $row['qty'],
                 ];
 
                 $message = json_encode($data);
 
-                $this->batchHelper->addStockMessageToQueue($message);
+                $this->stockHelper->addStockMessageToQueue($message);
 
                 unset($this->product_ids[$product_id]);
             }
@@ -148,51 +149,34 @@ class Stock
     }
 
     /**
-     * @param array $batch
+     * assignProperSkus.
      *
-     * @return array
-     */
-    private function getUniqueSkus($batch)
-    {
-        $skus = array_unique(
-            array_map(
-                function ($item) {
-                    return $item['sku'];
-                }, $batch
-            )
-        );
-
-        return $skus;
-    }
-
-    /**
-     * assignProductId.
-     *
-     * Assign product ids to each row in batch. Function copied from
-     * Magento\InventoryMessageBus\Model\ResourceModel\StockUpdateIdx.
+     * Assign proper SKUs to each row in batch. For configurable products we
+     * usually get two entries for both parent and child products but with same
+     * (child) SKUs in both. This blocks our flow as we rely heavily on SKUs.
      *
      * @param array $batch
      *
      * @return array
      */
-    private function assignProductId($batch)
+    private function assignProperSkus($batch)
     {
-        $skus = $this->getUniqueSkus($batch);
+        $productIds = array_column($batch, 'product_id');
 
         $select = $this->connection->select()->from(
             $this->resource->getTableName('catalog_product_entity'),
-            ['sku', 'entity_id']
+            ['entity_id', 'sku']
         );
 
-        $select->where('sku IN (?)', $skus);
+        $select->where('entity_id IN (?)', $productIds);
 
-        $productIds = $this->connection->fetchPairs($select);
+        $records = $this->connection->fetchPairs($select);
 
         foreach ($batch as $key => $row) {
-            if (isset($productIds[$row['sku']])) {
-                $batch[$key]['product_id'] = $productIds[$row['sku']];
+            if (isset($records[$row['product_id']])) {
+                $batch[$key]['exact_sku'] = $records[$row['product_id']];
             } else {
-                unset($batch[$key]);
+                $batch[$key]['exact_sku'] = $row['sku'];
             }
         }
 
@@ -245,11 +229,14 @@ class Stock
                 unset($this->product_ids[$product_id]);
             }
             else {
+                // We might not have any entry in DB for new products.
+                $oldStock = $productQuantities[$product_id] ?? 'NA';
+
                 // Stock changed for this product, we will trigger stock push
                 // for this one.
                 $this->logger->debug('beforeUpdateStockTable: Stock changed.', [
                     'product_id' => $product_id,
-                    'old_stock' => $productQuantities[$product_id],
+                    'old_stock' => $oldStock,
                     'new_stock' => $new_quantity,
                     'website_ids' => json_encode($websiteIds),
                 ]);

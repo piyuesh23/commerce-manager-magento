@@ -12,25 +12,14 @@ namespace Acquia\CommerceManager\Helper;
 
 use Acquia\CommerceManager\Helper\Data as ClientHelper;
 use Acquia\CommerceManager\Helper\Acm as AcmHelper;
-use Acquia\CommerceManager\Model\Product\RelationBuilderInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory;
-use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
-use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Gallery;
-use Magento\Framework\Webapi\ServiceOutputProcessor;
-use Magento\CatalogRule\Model\Rule;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Eav\Api\AttributeSetRepositoryInterface;
-use Magento\CatalogInventory\Api\StockRegistryInterface;
-use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\Module\ModuleListInterface;
+use Psr\Log\LoggerInterface;
+
 /**
  * ProductBatch
  *
@@ -46,97 +35,15 @@ class ProductBatch extends AbstractHelper
     const ENDPOINT_PRODUCT_UPDATE = 'ingest/product';
 
     /**
-     * Connector Stock Update Endpoint
-     *
-     * @const ENDPOINT_PRODUCT_UPDATE
-     */
-    const ENDPOINT_STOCK_UPDATE = 'ingest/product-stock';
-
-    /**
      * Consumer name (see etc/communications.xml).
      */
     const PRODUCT_PUSH_CONSUMER = 'connector.product.push';
-
-    /**
-     * Consumer name for stock.
-     */
-    const STOCK_PUSH_CONSUMER = 'connector.stock.push';
 
     /**
      * Magento Message Queue Module Name
      * @const MESSAGEQUEUE_MODULE
      */
     const MESSAGEQUEUE_MODULE = 'Magento_MessageQueue';
-
-    /**
-     * Metadata service.
-     *
-     * @var ProductAttributeRepositoryInterface $metadataService
-     */
-    protected $metadataService;
-
-    /**
-     * Media Gallery Resource Model
-     *
-     * @var Gallery $galleryResource
-     */
-    protected $galleryResource;
-
-    /**
-     * Magento WebAPI Output Processor
-     *
-     * @var ServiceOutputProcessor $serviceOutputProcessor
-     */
-    protected $serviceOutputProcessor;
-
-    /**
-     * Catalog rule model.
-     *
-     * @var \Magento\CatalogRule\Model\Rule $catalogRule
-     */
-    protected $catalogRule;
-
-    /**
-     * Product API Relation Data Builder
-     *
-     * @var RelationBuilderInterface $relationBuilder
-     */
-    protected $relationBuilder;
-
-    /**
-     * AttributeSetRepositoryInterface object
-     *
-     * @var AttributeSetRepositoryInterface $attributeSet
-     */
-    protected $attributeSet;
-
-    /**
-     * Stock Item factory object.
-     *
-     * @var \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory
-     */
-    protected $stockItemFactory;
-
-    /**
-     * Stock Item Repository object.
-     *
-     * @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface
-     */
-    protected $stockItemRepository;
-
-    /**
-     * Stock Item Criteria builder object.
-     *
-     * @var \Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory
-     */
-    protected $stockItemCriteriaFactory;
-
-    /**
-     * Store manager.
-     *
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $storeManager;
 
     /**
      * Acquia Commerce Manager Client Helper
@@ -160,27 +67,6 @@ class ProductBatch extends AbstractHelper
     protected $logger;
 
     /**
-     * Magento WebAPI Service Class Name (for output formatting)
-     *
-     * @var string $serviceClassName
-     */
-    protected $serviceClassName = 'Magento\Catalog\Api\ProductRepositoryInterface';
-
-    /**
-     * Magento WebAPI Service Class Name (for output formatting of stock)
-     *
-     * @var string $stockServiceClassName
-     */
-    protected $stockServiceClassName = 'Magento\CatalogInventory\Api\StockItemRepositoryInterface';
-
-    /**
-     * Magento WebAPI Service Method Name (for output formatting)
-     *
-     * @var string $serviceMethodName
-     */
-    protected $serviceMethodName = 'get';
-
-    /**
      * \Magento\Framework\MessageQueue\PublisherInterface
      * EE only
      */
@@ -200,48 +86,20 @@ class ProductBatch extends AbstractHelper
     /**
      * ProductBatch constructor.
      *
-     * @param Context                             $context
-     * @param ProductAttributeRepositoryInterface $metadataServiceInterface
-     * @param Gallery                             $galleryResource
-     * @param ServiceOutputProcessor              $outputProc
-     * @param Rule                                $catalog_rule
-     * @param ProductRepositoryInterface          $productRepository
-     * @param RelationBuilderInterface            $relationBuilder
-     * @param AttributeSetRepositoryInterface     $attributeSet
-     * @param StockItemInterfaceFactory           $stockItemFactory
-     * @param StockItemCriteriaInterfaceFactory   $stockItemCriteriaFactory
-     * @param StockItemRepositoryInterface        $stockItemRepository
-     * @param StoreManagerInterface               $store_manager
-     * @param Data                                $clientHelper
+     * @param Context $context
+     * @param ProductRepositoryInterface $productRepository
+     * @param Data $clientHelper
+     * @param AcmHelper $acmHelper
+     * @param ModuleListInterface $moduleList
      */
     public function __construct(
         Context $context,
-        ProductAttributeRepositoryInterface $metadataServiceInterface,
-        Gallery $galleryResource,
-        ServiceOutputProcessor $outputProc,
-        Rule $catalog_rule,
         ProductRepositoryInterface $productRepository,
-        RelationBuilderInterface $relationBuilder,
-        AttributeSetRepositoryInterface $attributeSet,
-        StockItemInterfaceFactory $stockItemFactory,
-        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory,
-        StockItemRepositoryInterface $stockItemRepository,
-        StoreManagerInterface $store_manager,
         ClientHelper $clientHelper,
         AcmHelper $acmHelper,
         ModuleListInterface $moduleList
     ) {
-        $this->metadataService = $metadataServiceInterface;
-        $this->galleryResource = $galleryResource;
-        $this->serviceOutputProcessor = $outputProc;
-        $this->catalogRule = $catalog_rule;
         $this->productRepository = $productRepository;
-        $this->relationBuilder = $relationBuilder;
-        $this->attributeSet = $attributeSet;
-        $this->stockItemFactory = $stockItemFactory;
-        $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
-        $this->stockItemRepository = $stockItemRepository;
-        $this->storeManager = $store_manager;
         $this->clientHelper = $clientHelper;
         $this->acmHelper = $acmHelper;
         $this->moduleList = $moduleList;
@@ -340,76 +198,11 @@ class ProductBatch extends AbstractHelper
             // Send Connector request.
             $doReq = function ($client, $opt) use ($arrayOfProducts) {
                 $opt['json'] = $arrayOfProducts;
-                return $client->post('ingest/product', $opt);
+                return $client->post(self::ENDPOINT_PRODUCT_UPDATE, $opt);
             };
+
             $this->clientHelper->tryRequest($doReq, $action, $storeId);
         }
-    }
-
-    /**
-     * pushStock.
-     *
-     * Helper function to push stock data through API.
-     *
-     * @param array $stockData
-     *   Stock data.
-     */
-    public function pushStock($stockData) {
-        // Send Connector request.
-        $doReq = function ($client, $opt) use ($stockData) {
-            $opt['json'] = $stockData;
-            return $client->post(self::ENDPOINT_STOCK_UPDATE, $opt);
-        };
-
-        $this->clientHelper->tryRequest($doReq, 'pushStock');
-    }
-
-
-    /**
-     * getStockInfo.
-     *
-     * Get stock info for a product.
-     *
-     * @param $productId
-     * @param $scopeId
-     * @param $returnObject
-     *
-     * @return array
-     */
-    public function getStockInfo($productId, $scopeId = NULL, $returnObject = FALSE)
-    {
-        // When consumers are running, StockRegistry uses static cache.
-        // With this cache applied, stock for a particular product if
-        // changed multiple times within lifespan of consumer, it pushes
-        // only the first change every-time.
-        // To avoid the issue, we use the code used to cache stock info
-        // directly. Code taken from below class::method:
-        // Magento\CatalogInventory\Model\StockRegistryProvider::getStockItem().
-        $criteria = $this->stockItemCriteriaFactory->create();
-        $criteria->setProductsFilter($productId);
-
-        if ($scopeId) {
-            $criteria->setScopeFilter($scopeId);
-        }
-
-        $collection = $this->stockItemRepository->getList($criteria);
-        $stockItem = current($collection->getItems());
-
-        if (!($stockItem && $stockItem->getItemId())) {
-            $stockItem = $this->stockItemFactory->create();
-        }
-
-        if ($returnObject) {
-            return $stockItem;
-        }
-
-        $stock = $this->serviceOutputProcessor->process(
-            $stockItem,
-            $this->stockServiceClassName,
-            $this->serviceMethodName
-        );
-
-        return $stock;
     }
 
     /**
@@ -432,16 +225,6 @@ class ProductBatch extends AbstractHelper
     }
 
     /**
-     * Add stock message (consisting of product id and sku) to queue.
-     *
-     * @param mixed $message
-     */
-    public function addStockMessageToQueue($message)
-    {
-        $this->publisher->publish(self::STOCK_PUSH_CONSUMER, $message);
-    }
-
-    /**
      * Get batch size from config.
      *
      * @return mixed
@@ -461,22 +244,6 @@ class ProductBatch extends AbstractHelper
         }
 
         return $batchSize;
-    }
-
-    /**
-     * Get stock mode (pull / push).
-     *
-     * @return mixed
-     */
-    public function getStockMode() {
-        $path = 'webapi/acquia_commerce_settings/push_stock';
-
-        $stockMode = $this->scopeConfig->getValue(
-            $path,
-            ScopeConfigInterface::SCOPE_TYPE_DEFAULT
-        );
-
-        return $stockMode ? 'push' : 'pull';
     }
 
 }
