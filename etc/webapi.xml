@@ -145,5 +145,12 @@
         </resources>
     </route>
 
+    <route url="/V1/acquia/verify" method="GET">
+        <service class="Acquia\CommerceManager\Api\VerifyConfigurationInterface" method="verifyConfiguration"/>
+        <resources>
+            <resource ref="Magento_Catalog::products"/>
+        </resources>
+    </route>
+
 </routes>
 
