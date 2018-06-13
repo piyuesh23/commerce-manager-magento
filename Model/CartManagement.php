@@ -231,11 +231,8 @@ class CartManagement implements ApiInterface
                 $assigned = true;
             }
         } catch (NoSuchEntityException $e) {
-            // Intentionally left blank.
-            // Except empty catches are a code sniff fail
-            // Except 'NoSuchEntityException' just means the customerId doesn't exist
-            // Introduce tautology to pass code sniff standard:
-            $assigned = false;
+            // Actually it is better to throw up to Commerce Connector
+            throw $e;
         }
 
         if ($storeId === null) {
@@ -243,13 +240,14 @@ class CartManagement implements ApiInterface
         }
         // Associate new cart ID
         if (!$assigned) {
-            $this->quoteManager->assignCustomer($cartId, $customerId, $storeId);
+            // Always true actually (throws if assignation is unsuccessful)
+            $assigned = $this->quoteManager->assignCustomer($cartId, $customerId, $storeId);
         }
 
         $quote = $this->quoteRepository->getActive($cartId);
 
         // Assign cart coupon
-        $couponApplied = false;
+        $couponApplied = true;
         if ($couponCode) {
             try {
                 $couponApplied = $this->couponManager->set(
@@ -270,9 +268,8 @@ class CartManagement implements ApiInterface
             ]
         );
 
-        // TODO (Malachy): improve the associate-cart returned data
-        // Surely we return $assigned which is only false if customerID does not exist
-        return ($couponApplied);
+        // $assigned is always true here
+        return ($assigned && $couponApplied);
     }
 
     /**
