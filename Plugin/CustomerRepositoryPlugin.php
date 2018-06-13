@@ -4,6 +4,8 @@ namespace Acquia\CommerceManager\Plugin;
 
 class CustomerRepositoryPlugin
 {
+    /** @var \Magento\Framework\App\State */
+    private $appState;
     /** @var \Magento\Store\Model\StoreManagerInterface */
     private $storeManager;
     /** @var \Magento\Framework\Api\FilterFactory */
@@ -14,12 +16,14 @@ class CustomerRepositoryPlugin
     private $configShare;
 
     public function __construct(
+        \Magento\Framework\App\State $appState,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Api\FilterFactory $filterFactory,
         \Magento\Framework\Api\Search\FilterGroupFactory $filterGroupFactory,
         \Magento\Customer\Model\Config\Share $configShare
     )
     {
+        $this->appState = $appState;
         $this->storeManager = $storeManager;
         $this->filterFactory = $filterFactory;
         $this->filterGroupFactory = $filterGroupFactory;
@@ -54,6 +58,12 @@ class CustomerRepositoryPlugin
      */
     public function beforeSave($subject, \Magento\Customer\Api\Data\CustomerInterface $customer, $passwordHash = null)
     {
+        // Restrict this plugin to restAPI only
+        $notRestApi = !($this->appState->getAreaCode() == \Magento\Framework\App\Area::AREA_WEBAPI_REST);
+        if ($notRestApi) {
+            return [$customer, $passwordHash];
+        }
+
         // Kill any website_id passed here. Do not send website_id. Use only store_id.
         $customer->setWebsiteId(null);
 
