@@ -39,6 +39,11 @@ use Magento\Quote\Api\Data\CartInterface;
 class CartManagement implements ApiInterface
 {
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @var RegionFactory $regionFactory
      */
     protected $regionFactory;
@@ -135,6 +140,7 @@ class CartManagement implements ApiInterface
      * @param ManagerInterface $eventManager
      */
     public function __construct(
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         RegionFactory $regionFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Quote\Api\Data\CartExtensionFactory $cartExtensionFactory,
@@ -211,7 +217,7 @@ class CartManagement implements ApiInterface
     public function associateCart(
         $customerId,
         $cartId,
-        $storeId,
+        $storeId = null,
         $couponCode = null
     ) {
         // Abandon existing cart
@@ -232,6 +238,9 @@ class CartManagement implements ApiInterface
             $assigned = false;
         }
 
+        if ($storeId === null) {
+            $storeId = $this->storeManager->getStore()->getId();
+        }
         // Associate new cart ID
         if (!$assigned) {
             $this->quoteManager->assignCustomer($cartId, $customerId, $storeId);
@@ -261,6 +270,8 @@ class CartManagement implements ApiInterface
             ]
         );
 
+        // TODO (Malachy): improve the associate-cart returned data
+        // Surely we return $assigned which is only false if customerID does not exist
         return ($couponApplied);
     }
 
