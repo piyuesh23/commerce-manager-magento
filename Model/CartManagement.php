@@ -39,6 +39,11 @@ use Magento\Quote\Api\Data\CartInterface;
 class CartManagement implements ApiInterface
 {
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @var RegionFactory $regionFactory
      */
     protected $regionFactory;
@@ -135,6 +140,7 @@ class CartManagement implements ApiInterface
      * @param ManagerInterface $eventManager
      */
     public function __construct(
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         RegionFactory $regionFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Quote\Api\Data\CartExtensionFactory $cartExtensionFactory,
@@ -211,7 +217,7 @@ class CartManagement implements ApiInterface
     public function associateCart(
         $customerId,
         $cartId,
-        $storeId,
+        $storeId = null,
         $couponCode = null
     ) {
         // Abandon existing cart
@@ -225,22 +231,22 @@ class CartManagement implements ApiInterface
                 $assigned = true;
             }
         } catch (NoSuchEntityException $e) {
-            // Intentionally left blank.
-            // Except empty catches are a code sniff fail
-            // Except 'NoSuchEntityException' just means the customerId doesn't exist
-            // Introduce tautology to pass code sniff standard:
             $assigned = false;
         }
 
+        if ($storeId === null) {
+            $storeId = $this->storeManager->getStore()->getId();
+        }
         // Associate new cart ID
         if (!$assigned) {
-            $this->quoteManager->assignCustomer($cartId, $customerId, $storeId);
+            // Always true actually (throws if assignation is unsuccessful)
+            $assigned = $this->quoteManager->assignCustomer($cartId, $customerId, $storeId);
         }
 
         $quote = $this->quoteRepository->getActive($cartId);
 
         // Assign cart coupon
-        $couponApplied = false;
+        $couponApplied = true;
         if ($couponCode) {
             try {
                 $couponApplied = $this->couponManager->set(
@@ -261,7 +267,8 @@ class CartManagement implements ApiInterface
             ]
         );
 
-        return ($couponApplied);
+        // $assigned is always true here
+        return ($assigned && $couponApplied);
     }
 
     /**
