@@ -231,8 +231,7 @@ class CartManagement implements ApiInterface
                 $assigned = true;
             }
         } catch (NoSuchEntityException $e) {
-            // Actually it is better to throw up to Commerce Connector
-            throw $e;
+            $assigned = false;
         }
 
         if ($storeId === null) {
