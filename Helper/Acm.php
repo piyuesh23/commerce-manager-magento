@@ -5,6 +5,7 @@ namespace Acquia\CommerceManager\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Acquia\CommerceManager\Helper\Data as ClientHelper;
+use Acquia\CommerceManager\Helper\Stock as StockHelper;
 
 /**
  * Class Acm
@@ -69,12 +70,15 @@ class Acm extends AbstractHelper
     private $storeManager;
 
     /**
-     * @var \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
+     * @var StockHelper $stockHelper
      */
-    private $stockRegistry;
+    private $stockHelper;
 
     /**
      * Acm constructor.
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param ClientHelper $clientHelper
+     * @param StockHelper $stockHelper
      * @param \Magento\Framework\Webapi\ServiceOutputProcessor $serviceOutputProcessor
      * @param \Magento\Catalog\Model\ResourceModel\Product\Gallery $galleryResource
      * @param \Magento\Catalog\Model\Product\Gallery\ReadHandler $mediaGalleryReadHandler
@@ -83,9 +87,9 @@ class Acm extends AbstractHelper
      * @param \Magento\Framework\App\Helper\Context $context
      */
     public function __construct(
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         ClientHelper $clientHelper,
+        StockHelper $stockHelper,
         \Magento\Framework\Webapi\ServiceOutputProcessor $serviceOutputProcessor,
         \Magento\Catalog\Model\ResourceModel\Product\Gallery $galleryResource,
         \Magento\Catalog\Model\Product\Gallery\ReadHandler $mediaGalleryReadHandler,
@@ -93,7 +97,7 @@ class Acm extends AbstractHelper
         \Magento\Eav\Api\AttributeSetRepositoryInterface $attributeSet,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->stockRegistry = $stockRegistry;
+        $this->stockHelper = $stockHelper;
         $this->storeManager = $storeManager;
         $this->clientHelper = $clientHelper;
         $this->serviceOutputProcessor = $serviceOutputProcessor;
@@ -205,13 +209,14 @@ class Acm extends AbstractHelper
      */
     public function stockAttributes()
     {
-        $store_id = $this->product->getStoreId();
-        $scopeId = $this->storeManager->getStore($store_id)->getWebsiteId();
-        $stock_item = $this->stockRegistry->getStockItem(
-            $this->product->getId(), $scopeId
-        );
+        $storeId = $this->product->getStoreId();
+
+        // Adding stock info to the product.
+        $scopeId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        $stockItem = $this->stockHelper->getStockInfo($this->product->getId(), $scopeId, TRUE);
+
         $productExtension = $this->product->getExtensionAttributes();
-        $productExtension->setStockItem($stock_item);
+        $productExtension->setStockItem($stockItem);
         $this->product->setExtensionAttributes($productExtension);
     }
 

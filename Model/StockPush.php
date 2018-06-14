@@ -10,18 +10,18 @@
 
 namespace Acquia\CommerceManager\Model;
 
-use Acquia\CommerceManager\Helper\ProductBatch;
+use Acquia\CommerceManager\Helper\Stock as StockHelper;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class StockPush
 {
     /**
-     * Product Helper object.
+     * Acquia Connector Stock Helper.
      *
-     * @var ProductBatch
+     * @var StockHelper
      */
-    private $batchHelper;
+    private $stockHelper;
 
     /**
      * Store Manager object.
@@ -47,16 +47,16 @@ class StockPush
     /**
      * StockPush constructor.
      *
-     * @param ProductBatch         $batchHelper
+     * @param StockHelper $stockHelper
      * @param StoreManagerInterface $storeManager
-     * @param LoggerInterface       $logger
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        ProductBatch $batchHelper,
+        StockHelper $stockHelper,
         StoreManagerInterface $storeManager,
         LoggerInterface $logger
     ) {
-        $this->batchHelper = $batchHelper;
+        $this->stockHelper = $stockHelper;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
     }
@@ -68,10 +68,12 @@ class StockPush
      */
     public function pushStock($message)
     {
-        $data = json_decode($message, true);
+        $data = json_decode($message, TRUE);
+
+        $data['qty'] = isset($data['qty']) ? $data['qty'] : 0;
 
         // Sanity check.
-        if (empty($data['id']) || empty($data['sku']) || empty($data['qty'])) {
+        if (empty($data['id']) || empty($data['sku'])) {
             $this->logger->warning('Invalid message for push stock queue.', [
                 'message' => $message,
             ]);
@@ -105,7 +107,7 @@ class StockPush
 
             $this->logger->debug('Pushing stock for product.', $stock);
 
-            $this->batchHelper->pushStock($stock);
+            $this->stockHelper->pushStock($stock, $stock['store_id']);
         }
     }
 
