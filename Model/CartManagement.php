@@ -239,6 +239,10 @@ class CartManagement implements ApiInterface
         }
         // Associate new cart ID
         if (!$assigned) {
+            // Unset existing customer if assigned, this is required when
+            // user is trying to change email address for Guest Carts.
+            $this->quoteRepository->getActive($cartId)->setCustomerId(null);
+
             // Always true actually (throws if assignation is unsuccessful)
             $assigned = $this->quoteManager->assignCustomer($cartId, $customerId, $storeId);
         }
