@@ -128,7 +128,7 @@ class SalesRuleRepository implements SalesRuleRepositoryInterface
                     $this->discountData[$rid] :
                     [];
             $coupon_code =
-                (isset($this->getCouponCode())) ?
+                (!empty($this->getCouponCode())) ?
                     $this->getCouponCode() :
                     '';
             $result->setCouponCode($coupon_code);
